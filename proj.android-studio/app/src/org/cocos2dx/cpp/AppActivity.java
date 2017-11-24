@@ -159,8 +159,12 @@ public class AppActivity extends Cocos2dxActivity {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 if(m_cursor.moveToNext()){
                     String song2 = m_cursor.getString(m_cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                    try{m_player.setDataSource(getApplicationContext(), Uri.parse(song2));
-                    m_player.start();}
+                    try{
+                        mediaPlayer.stop();
+                        mediaPlayer.reset();
+                        mediaPlayer.setDataSource(song2);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();}
                     catch (Exception e){
 
                         Log.e("TAG", "예외다~~~~~"+e.getMessage()+", ");
