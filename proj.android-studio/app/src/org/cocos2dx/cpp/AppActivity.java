@@ -47,6 +47,11 @@ public class AppActivity extends Cocos2dxActivity {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST};
     private Cursor m_cursor;
+    private String[] album_art ={
+            MediaStore.Audio.Albums.ALBUM_ART,
+            MediaStore.Audio.Albums._ID
+    };
+    private Cursor m_artCursor;
     MediaPlayer m_player;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,8 @@ public class AppActivity extends Cocos2dxActivity {
         acti = this;
         m_cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 title, null, null, null);
+        m_artCursor = getContentResolver().query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                album_art,null,null,null);
     }
     public static Object getThisActivity(){
         return acti;
@@ -130,6 +137,7 @@ public class AppActivity extends Cocos2dxActivity {
         String songt=null;
         String song=null;
         Uri sAlbumArtUri = null;
+        String albumArt = null;
         if(m_player != null) {
             m_player.release();
         }
@@ -151,6 +159,18 @@ public class AppActivity extends Cocos2dxActivity {
             return "file:///android_asset/k.jpg";
         }
 //        cursor.close();
+        if(m_artCursor != null){
+            if(m_artCursor.moveToNext()){
+                int albumart = m_artCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
+                int albumid = m_artCursor.getColumnIndex(MediaStore.Audio.Albums._ID);
+                albumArt = m_artCursor.getString(albumart);
+            }else{
+                Log.e(this.getClass().getName(), "엘스다");
+                m_artCursor.moveToFirst();
+                int albumart = m_artCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
+                albumArt = m_artCursor.getString(albumart);
+            }
+        }
 
         m_player = MediaPlayer.create(this, Uri.parse(song));
         m_player.start();
@@ -172,6 +192,6 @@ public class AppActivity extends Cocos2dxActivity {
                 }
             }
         });
-        return sAlbumArtUri.toString();
+        return albumArt;
     }
 }
