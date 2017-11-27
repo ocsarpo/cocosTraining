@@ -2,7 +2,7 @@
 #include "SimpleAudioEngine.h"
 
 HelloWorld* myself;
-
+Sprite* K;
 Scene* HelloWorld::createScene()
 {
     return HelloWorld::create();
@@ -95,6 +95,7 @@ bool HelloWorld::init()
     spr2->setScale(0.5);
     spr2->setTag(TAG_SPRITE_IMAGE);
     this->addChild(spr2);
+    K = spr2;
 //    auto label2 = Label::createWithTTF("K 케빵이 K", "fonts/Marker Felt.ttf", 12);
     auto label2 = Label::createWithSystemFont("K 케빵이 K", "Ariel", 12);
     label2->setPosition(Vec2(origin.x + visibleSize.width/7, origin.y+visibleSize.height/2));
@@ -183,6 +184,8 @@ JNIEXPORT void JNICALL Java_org_cocos2dx_cpp_AppActivity_setAlbumArt(JNIEnv *env
     const char *rev = env->GetStringUTFChars(str, 0);
     CCLOG("CALL FROM JAVA %s", rev);
 //    myself->changeAlbum(rev);
+    K->setTexture(Director::getInstance()->getTextureCache()->addImage(rev));
+
 }
 }
 

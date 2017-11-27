@@ -161,7 +161,26 @@ public class AppActivity extends Cocos2dxActivity {
                     mediaPlayer.prepare();
                     mediaPlayer.start();
                     String nextArt = m_musics.get(curIndex).getAlbumArt();
-                    setAlbumArt(nextArt);
+
+                    /*
+                        안드로이드의 UI 처리 스레드, 데이터처리 스레드, 코코스 OpenGL 처리 스레드가 분리되어 있음.
+                        그래서 JNI를 통해 cocos2d-x 엔진으로 처리할 내용은 runOnGLThread(); 함수를 사용하여 OpenGL 스레드에서 처리한다.
+                        UI 관련 처리는 runOnUIThread()를 통해 하면 됨.
+                        적절한 스레드에서 처리하지 않을 시 크래쉬 OR 화면에 제대로 표시가 안됨.
+                     */
+                    new Thread(new Runnable(){
+                        @Override
+                        public void run() {
+                            runOnGLThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String nextArt = m_musics.get(curIndex).getAlbumArt();
+                                    setAlbumArt(nextArt);
+                                }
+                            });
+                        }
+                    }).start();
+
                 }catch (Exception e){
                     Log.e("MUSIC PLAYER EXCEPTION", e.getMessage());
                 }
