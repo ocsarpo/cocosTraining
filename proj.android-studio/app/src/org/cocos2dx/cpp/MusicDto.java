@@ -5,59 +5,108 @@ package org.cocos2dx.cpp;
  */
 
 public class MusicDto {
-    private String id;
-    private String albumid;
-    private String title;
+    private String directory;
+    private String name;
     private String artist;
+    private String album;
+    private String genre;
+    private String year;
+    private String duration;
+    private String track;
+    private String displayName;
+    private String albumArt;
 
     public MusicDto(){}
-
-    public MusicDto(String id, String albumid, String title, String artist){
-        this.id = id;
-        this.albumid = albumid;
-        this.title = title;
+    public MusicDto(String directory, String name, String artist, String album, String year, String duration, String track, String displayName, String albumArt) {
+        this.directory = directory;
+        this.name = name;
         this.artist = artist;
+        this.album = album;
+//        this.genre = genre;
+        this.year = year;
+        this.duration = duration;
+        this.track = track;
+        this.displayName = displayName;
+        this.albumArt = albumArt;
     }
 
-    public String getId() {
-        return id;
+    public String getDirectory() {
+        return directory;
     }
 
-    public String getAlbumid() {
-        return albumid;
+    public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getArtist() {
         return artist;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setAlbumid(String albumid) {
-        this.albumid = albumid;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public void setArtist(String artist) {
         this.artist = artist;
     }
 
-    @Override
-    public String toString() {
-        return "MusicDto{" +
-                "id='" + id + '\'' +
-                ", albumid='" + albumid + '\'' +
-                ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                '}';
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+//    public String getGenre() {
+//        return genre;
+//    }
+//
+//    public void setGenre(String genre) {
+//        this.genre = genre;
+//    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public String getTrack() {
+        return track;
+    }
+
+    public void setTrack(String track) {
+        this.track = track;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getAlbumArt() {
+        return albumArt;
+    }
+
+    public void setAlbumArt(String albumArt) {
+        this.albumArt = albumArt;
     }
 }

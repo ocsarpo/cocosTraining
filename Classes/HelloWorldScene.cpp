@@ -1,11 +1,12 @@
 ﻿#include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
 
+HelloWorld* myself;
+
 Scene* HelloWorld::createScene()
 {
     return HelloWorld::create();
 }
-
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
 {
@@ -105,9 +106,10 @@ bool HelloWorld::init()
     listener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
     listener->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,this);
+
+    myself = this;
     return true;
 }
-
 void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
     Vec2 location = onTouchBeganLocation;
     auto spr = (Sprite*)this->getChildByTag(TAG_SPRITE_IMAGE);
@@ -120,12 +122,12 @@ void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
         if(location.y >= spr->getPosition().y){
             if(location.x <= (spr->getPosition().x + spr->getContentSize().width)){
                 if(location.y <= (spr->getPosition().y + spr->getContentSize().height)){
-                    if(this->evenClick)
-                        spr->setScale(2.0f);
-                    else
-                        spr->setScale(0.5f);
+//                    if(this->evenClick)
+//                        spr->setScale(2.0f);
+//                    else
+//                        spr->setScale(0.5f);
                     this->evenClick ^= true;
-
+//                  정적메서드 호출 방법.
 //                    JniMethodInfo t;
 //                    if(JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity","HelloJNI", "()Ljava/lang/String;")) {
 //                        jstring result = (jstring) t.env->CallStaticObjectMethod(t.classID,
@@ -136,7 +138,7 @@ void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
 //                        t.env->DeleteLocalRef(t.classID);
 //                    }
                     /**
-                     * java의 정적메서드를 호출하는 방법 (액티비티를 먼저 불러온 후, 메서드 호출)
+                     * java의 인스턴스메서드를 호출하는 방법 (액티비티를 먼저 불러온 후, 메서드 호출)
                      */
 //                    JniMethodInfo t;
 //                    bool isHave = JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "getThisActivity", "()Ljava/lang/Object;");
@@ -158,7 +160,7 @@ void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
                     if(isHave){
                         activityObj=t.env->CallStaticObjectMethod(t.classID, t.methodID);
                     }
-                    isHave = JniHelper::getMethodInfo(t, "org/cocos2dx/cpp/AppActivity","albumart", "()Ljava/lang/String;");
+                    isHave = JniHelper::getMethodInfo(t, "org/cocos2dx/cpp/AppActivity","album", "()Ljava/lang/String;");
                     if(isHave){
                         jstring result = (jstring) t.env->CallObjectMethod(activityObj, t.methodID);
                         const char *rev = t.env->GetStringUTFChars(result, 0);
@@ -171,6 +173,17 @@ void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
             }
         }
     }
+}
+void HelloWorld::changeAlbum(const char* path){
+    auto spr = (Sprite*)this->getChildByTag(TAG_SPRITE_IMAGE);
+    spr->setTexture (Director::getInstance()->getTextureCache()->addImage(path));
+}
+extern "C" {
+JNIEXPORT void JNICALL Java_org_cocos2dx_cpp_AppActivity_setAlbumArt(JNIEnv *env, jobject obj, jstring str) {
+    const char *rev = env->GetStringUTFChars(str, 0);
+    CCLOG("CALL FROM JAVA %s", rev);
+//    myself->changeAlbum(rev);
+}
 }
 
 bool HelloWorld::onTouchBegan(Touch *touch, Event *unused_event) {
@@ -192,7 +205,7 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     //Close the cocos2d-x game scene and quit the application
     Director::getInstance()->end();
 
-    #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     exit(0);
 #endif
 

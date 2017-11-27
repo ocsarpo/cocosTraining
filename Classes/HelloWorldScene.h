@@ -15,7 +15,6 @@ public:
     bool evenClick;
 public:
     static cocos2d::Scene* createScene();
-
     virtual bool init();
     
     // a selector callback
@@ -24,10 +23,13 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
     void compareImage(Vec2 onTouchBeganLocation);
+    void changeAlbum(const char* path);
 
     bool onTouchBegan(Touch *touch, Event *unused_event);
     void onTouchMoved(Touch *touch, Event *unused_event);
     void onTouchEnded(Touch *touch, Event *unused_event);
+
+
 };
 
 #endif // __HELLOWORLD_SCENE_H__
