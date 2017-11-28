@@ -56,8 +56,6 @@ bool HelloWorld::init()
 
     /////////////////////////////
     // 3. add your codes below...
-
-    // add a label shows "Hello World"
     // create and initialize a label
     auto label = Label::createWithTTF("Hello SMX-Tapes", "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
@@ -76,6 +74,8 @@ bool HelloWorld::init()
     }
 
     // add "HelloWorld" splash screen"
+
+    //아이유사진
     auto sprite = Sprite::create("iu.jpg");
     if (sprite == nullptr)
     {
@@ -96,29 +96,53 @@ bool HelloWorld::init()
     spr2->setTag(TAG_SPRITE_IMAGE);
     this->addChild(spr2);
     K = spr2;
-//    auto label2 = Label::createWithTTF("K 케빵이 K", "fonts/Marker Felt.ttf", 12);
+
     auto label2 = Label::createWithSystemFont("K 케빵이 K", "Ariel", 12);
     label2->setPosition(Vec2(origin.x + visibleSize.width/7, origin.y+visibleSize.height/2));
     label2->setTag(TAG_K_TXT);
     this->addChild(label2,1);
 
+    //터치이벤트 등록
     auto listener = EventListenerTouchOneByOne::create();
     listener->onTouchBegan  = CC_CALLBACK_2(HelloWorld::onTouchBegan,this);
     listener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
     listener->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener,this);
 
+    //스프라이트 애니메이션
+    auto spani = Sprite::create("animations/grossini_dance_atlas.png");
+    auto texture = spani->getTexture();
+
+    auto animation = Animation::create();
+    animation->setDelayPerUnit(0.3f);
+
+    for(int i = 0; i<14; i++){
+        int col = i%5;
+        int row = i/5;
+        animation->addSpriteFrameWithTexture(texture, Rect(col*20, row*28, 20, 28));
+    }
+    auto pMan = Sprite::create("animations/grossini_dance_atlas.png", Rect(0,0,20,28));
+    pMan->setPosition(Point(240, 160));
+    this->addChild(pMan, 0);
+
+    auto animate = Animate::create(animation);
+    auto rep = RepeatForever::create(animate);
+    pMan->runAction(rep);
+    // 스프라이트 애니메이션 끝
+
     myself = this;
     return true;
 }
 void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
     Vec2 location = onTouchBeganLocation;
+    //태그로 지정한 스프라이트와 라벨을 가져옴
     auto spr = (Sprite*)this->getChildByTag(TAG_SPRITE_IMAGE);
     auto label = (Label*)this->getChildByTag(TAG_K_TXT);
 
     CCLOG("spr x=%f, y=%f", spr->getPosition().x, spr->getPosition().y);
     CCLOG("spr x=%f, y=%f", spr->getContentSize().height, spr->getContentSize().width);
 
+    //터치영역이 스프라이트 이미지 영역이라면..
     if(location.x >= spr->getPosition().x){
         if(location.y >= spr->getPosition().y){
             if(location.x <= (spr->getPosition().x + spr->getContentSize().width)){
@@ -155,16 +179,19 @@ void HelloWorld::compareImage(Vec2 onTouchBeganLocation) {
 //                        t.env->ReleaseStringUTFChars(result, rev);
 //                        t.env->DeleteLocalRef(t.classID);
 //                    }
+                    //액티비티정보 얻어옴
                     JniMethodInfo t;
                     bool isHave = JniHelper::getStaticMethodInfo(t, "org/cocos2dx/cpp/AppActivity", "getThisActivity", "()Ljava/lang/Object;");
                     jobject activityObj;
                     if(isHave){
                         activityObj=t.env->CallStaticObjectMethod(t.classID, t.methodID);
                     }
+                    //메소드호출
                     isHave = JniHelper::getMethodInfo(t, "org/cocos2dx/cpp/AppActivity","album", "()Ljava/lang/String;");
                     if(isHave){
                         jstring result = (jstring) t.env->CallObjectMethod(activityObj, t.methodID);
                         const char *rev = t.env->GetStringUTFChars(result, 0);
+                        //java에서 얻어온 앨범아트 셋
                         spr->setTexture (Director::getInstance()->getTextureCache()->addImage(rev));
 
                         t.env->ReleaseStringUTFChars(result, rev);
@@ -179,6 +206,9 @@ void HelloWorld::changeAlbum(const char* path){
     auto spr = (Sprite*)this->getChildByTag(TAG_SPRITE_IMAGE);
     spr->setTexture (Director::getInstance()->getTextureCache()->addImage(path));
 }
+
+//Tag ALBUMART
+//음악재생이 끝나고 다음음악이 재생될 때 그 음악의 앨범아트로 Sprite를 변경
 extern "C" {
 JNIEXPORT void JNICALL Java_org_cocos2dx_cpp_AppActivity_setAlbumArt(JNIEnv *env, jobject obj, jstring str) {
     const char *rev = env->GetStringUTFChars(str, 0);
@@ -190,8 +220,10 @@ JNIEXPORT void JNICALL Java_org_cocos2dx_cpp_AppActivity_setAlbumArt(JNIEnv *env
 }
 
 bool HelloWorld::onTouchBegan(Touch *touch, Event *unused_event) {
+    //터치 위치 파악
     Vec2 location = touch->getLocation();
     CCLOG("onTouchBegan X = %f, Y = %f", location.x, location.y);
+    //터치위치와 이미지영역 조사
     compareImage(location);
     return true;
 }

@@ -2,6 +2,7 @@ package org.cocos2dx.cpp;
 
 /**
  * Created by home on 2017-11-23.
+ * 기기 내 저장된 음악파일에서 취합할 데이터에 대한 클래스
  */
 
 public class MusicDto {
